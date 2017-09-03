@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-MAINTAINER Miguel Ángel Sánchez Palafox <gueroverde@gmail.com>
+MAINTAINER Miguel Angel Sanchez Palafox <gueroverde@gmail.com>
 
 ADD nginx.conf /etc/nginx/
 
