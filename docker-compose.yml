@@ -15,7 +15,7 @@ services:
         - "${NGINX_HOST_HTTPS_PORT}:443"
       depends_on:
         - php-fpm
-        - angular
+        - angular-cli
       networks:
         - net
 
@@ -31,7 +31,7 @@ services:
         - "dockerhost:${DOCKER_HOST_IP}"
       networks:
         - net 
-    angular:
+    angular-cli:
       build:
         context: ./angular
       volumes:

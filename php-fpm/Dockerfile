@@ -6,7 +6,18 @@
 
 FROM php:7.1-fpm
 
-MAINTAINER Miguel Ángel Sánchez Palafox <gueroverde@gmail.com>
+MAINTAINER Miguel Angel Sanchez Palafox <gueroverde@gmail.com>
+
+# Add a non-root user to prevent files being created with root permissions on host machine.
+ARG PUID=1000
+ARG PGID=1000
+
+ENV PUID ${PUID}
+ENV PGID ${PGID}
+
+RUN groupadd -g ${PGID} gueroverde && \
+    useradd -u ${PUID} -g gueroverde -m gueroverde && \
+    apt-get update -yqq
 
 #
 #--------------------------------------------------------------------------
@@ -43,3 +54,8 @@ RUN docker-php-ext-install mcrypt \
     --with-jpeg-dir=/usr/lib \
     --with-freetype-dir=/usr/include/freetype2 && \
     docker-php-ext-install gd
+
+RUN chown -R gueroverde:gueroverde /var/www
+
+    RUN curl -s http://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer
