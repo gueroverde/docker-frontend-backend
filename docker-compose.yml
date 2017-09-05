@@ -1,5 +1,4 @@
 version: '2'
-
 services:
     nginx:
       build:
@@ -17,7 +16,19 @@ services:
       container_name: nginx
       depends_on:
         - php-fpm
-        - angular-cli
+      networks:
+        - net
+    workspace:
+      build:
+        context: ./workspace
+        args:
+          - INSTALL_NODE=${WORKSPACE_INSTALL_NODE}
+          - NODE_VERSION=${WORKSPACE_NODE_VERSION}
+      extra_hosts:
+        - "dockerhost:${DOCKER_HOST_IP}"
+      volumes:
+          - ${APPLICATION_BACK}:/var/www/backend
+          - ${APPLICATION_FRONT}:/var/www/frontend
       networks:
         - net
 
@@ -30,20 +41,12 @@ services:
       expose:
         - "9000"
       container_name: php
+      depends_on:
+        - workspace
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       networks:
         - net
-    angular-cli:
-      build:
-        context: ./angular
-      container_name: angular-cli
-      volumes:
-        - ${APPLICATION_FRONT}:/var/www/frontend/angular
-      networks:
-        - net
-
-
 networks:
   net:
     driver: "bridge"
