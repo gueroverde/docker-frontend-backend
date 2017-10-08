@@ -45,3 +45,17 @@ RUN docker-php-ext-install mcrypt \
     --with-jpeg-dir=/usr/lib \
     --with-freetype-dir=/usr/include/freetype2 && \
     docker-php-ext-install gd
+
+#####################################
+# xDebug:
+#####################################
+
+ARG INSTALL_XDEBUG=false
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    # Install the xdebug extension
+    pecl install xdebug && \
+    docker-php-ext-enable xdebug \
+;fi
+
+# Copy xdebug configuration for remote debugging
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
