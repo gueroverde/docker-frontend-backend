@@ -6,6 +6,7 @@ services:
         args:
           - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
           - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
+          - INSTALL_PHPREDIS=${WORKSPACE_INSTALL_PHPREDIS}
       volumes:
           - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
           - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
@@ -58,6 +59,7 @@ services:
         context: ./php-fpm
         args:
           - INSTALL_XDEBUG=${PHP_FPM_INSTALL_XDEBUG}
+          - INSTALL_PHPREDIS=${PHP_FPM_INSTALL_PHPREDIS}
       volumes:
         - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
         - ${APPLICATION_BACK}:/var/www/backend
@@ -68,6 +70,17 @@ services:
         - workspace
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
+        - "www.gaia.local:${DOCKER_HOST_IP}"
+      networks:
+        - net
+    ### Redis Container #########################################
+
+    redis:
+      build: ./redis
+      volumes:
+        - ${DATA_SAVE_PATH}/redis:/data
+      ports:
+        - "${REDIS_PORT}:6379"
       networks:
         - net
 networks:
@@ -81,4 +94,6 @@ networks:
 
 volumes:
   mysql:
+    driver: "local"
+  redis:
     driver: "local"
